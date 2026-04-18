@@ -223,16 +223,16 @@
       margin-bottom: 30px;
     }
 
-    /* 가로 모드 */
+    /* 세로 모드: 1열 */
+    @media (orientation: portrait) {
+      .input-sections, .result-sections { grid-template-columns: 1fr; }
+    }
+
+    /* 가로 모드: 2열 유지, 여백 축소 */
     @media (orientation: landscape) and (max-height: 500px) {
       header { padding: 10px 20px; padding-top: calc(10px + env(safe-area-inset-top)); }
       .content { padding: 10px 16px; }
       .col-box { padding: 10px; }
-    }
-
-    @media (max-width: 360px) {
-      .input-sections, .result-sections { grid-template-columns: 1fr; }
-      .col-box { padding: 12px; }
     }
   </style>
 </head>
@@ -250,11 +250,11 @@
       <div class="col-title">공시지원금</div>
       <div class="field">
         <label>기계값 (원)</label>
-        <input type="number" id="g-device" inputmode="numeric" pattern="[0-9]*" placeholder="900000">
+        <input type="number" id="g-device" inputmode="numeric" pattern="[0-9]*" placeholder="">
       </div>
       <div class="field">
         <label>앞 구간 월 요금</label>
-        <input type="number" id="g-plan6" inputmode="numeric" pattern="[0-9]*" placeholder="89000">
+        <input type="number" id="g-plan6" inputmode="numeric" pattern="[0-9]*" placeholder="">
         <div class="month-slider">
           <div class="month-slider-row">
             <input type="range" id="gm1" min="1" max="23" value="6" step="1">
@@ -265,7 +265,7 @@
       </div>
       <div class="field">
         <label>뒷 구간 월 요금</label>
-        <input type="number" id="g-plan18" inputmode="numeric" pattern="[0-9]*" placeholder="69000">
+        <input type="number" id="g-plan18" inputmode="numeric" pattern="[0-9]*" placeholder="">
       </div>
     </div>
 
@@ -274,11 +274,11 @@
       <div class="col-title">선택약정</div>
       <div class="field">
         <label>기계값 (원)</label>
-        <input type="number" id="s-device" inputmode="numeric" pattern="[0-9]*" placeholder="1200000">
+        <input type="number" id="s-device" inputmode="numeric" pattern="[0-9]*" placeholder="">
       </div>
       <div class="field">
         <label>앞 구간 월 요금</label>
-        <input type="number" id="s-plan6" inputmode="numeric" pattern="[0-9]*" placeholder="66750">
+        <input type="number" id="s-plan6" inputmode="numeric" pattern="[0-9]*" placeholder="">
         <div class="month-slider">
           <div class="month-slider-row">
             <input type="range" id="sm1" min="1" max="23" value="6" step="1">
@@ -289,7 +289,7 @@
       </div>
       <div class="field">
         <label>뒷 구간 월 요금</label>
-        <input type="number" id="s-plan18" inputmode="numeric" pattern="[0-9]*" placeholder="51750">
+        <input type="number" id="s-plan18" inputmode="numeric" pattern="[0-9]*" placeholder="">
       </div>
     </div>
   </div>
