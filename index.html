@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="요금 비교">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <title>공시 vs 선택약정</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f5f5f7;
+      color: #1c1c1e;
+      min-height: 100dvh;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 0.5px solid #e0e0e0;
+      padding: 16px 20px 14px;
+      padding-top: calc(16px + env(safe-area-inset-top));
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1c1c1e;
+    }
+
+    .content { padding: 16px; }
+
+    /* 입력 섹션 */
+    .input-sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .col-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 14px 12px;
+      border: 0.5px solid #e0e0e0;
+    }
+
+    .col-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1c1c1e;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 0.5px solid #f0f0f0;
+    }
+
+    .field { margin-bottom: 10px; }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+
+    .field input[type=number] {
+      width: 100%;
+      padding: 8px 10px;
+      font-size: 14px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #f9f9f9;
+      color: #1c1c1e;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    .field input[type=number]:focus {
+      border-color: #007aff;
+      background: #fff;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    .month-slider { margin-top: 6px; }
+
+    .month-slider-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .month-slider-row input[type=range] {
+      flex: 1;
+      min-width: 0;
+      height: 4px;
+      accent-color: #007aff;
+    }
+
+    .month-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: #007aff;
+      white-space: nowrap;
+      min-width: 52px;
+      text-align: right;
+    }
+
+    .month-sub {
+      font-size: 10px;
+      color: #aaa;
+      margin-top: 3px;
+      text-align: right;
+    }
+
+    /* 결과 */
+    .result-sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .result-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .result-card.winner {
+      border: 2px solid #34c759;
+      background: #f0fff4;
+    }
+
+    .result-card.winner .rc-title { color: #1a7a3a; }
+    .result-card.winner .rc-total { color: #1a7a3a; }
+
+    .rc-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 20px;
+      background: #34c759;
+      color: #fff;
+      margin-bottom: 5px;
+    }
+
+    .rc-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #1c1c1e;
+      margin-bottom: 8px;
+    }
+
+    .rc-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 3px;
+      gap: 4px;
+    }
+
+    .rc-row span:last-child {
+      color: #1c1c1e;
+      font-weight: 500;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .rc-sep {
+      border: none;
+      border-top: 0.5px solid #e8e8e8;
+      margin: 7px 0;
+    }
+
+    .rc-total-label { font-size: 10px; color: #aaa; }
+
+    .rc-total {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1c1c1e;
+      margin-top: 2px;
+    }
+
+    /* 차액 박스 */
+    .diff-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      border: 0.5px solid #e0e0e0;
+      margin-bottom: 20px;
+    }
+
+    .diff-label { font-size: 13px; color: #888; margin-bottom: 4px; }
+    .diff-value { font-size: 24px; font-weight: 700; color: #007aff; }
+    .diff-desc { font-size: 12px; color: #aaa; margin-top: 4px; }
+
+    /* 초기화 버튼 */
+    .reset-btn {
+      width: 100%;
+      padding: 13px;
+      background: #f5f5f7;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888;
+      cursor: pointer;
+      margin-bottom: 30px;
+    }
+
+    /* 가로 모드 */
+    @media (orientation: landscape) and (max-height: 500px) {
+      header { padding: 10px 20px; padding-top: calc(10px + env(safe-area-inset-top)); }
+      .content { padding: 10px 16px; }
+      .col-box { padding: 10px; }
+    }
+
+    @media (max-width: 360px) {
+      .input-sections, .result-sections { grid-template-columns: 1fr; }
+      .col-box { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📱 공시지원금 vs 선택약정</h1>
+</header>
+
+<div class="content">
+
+  <div class="input-sections">
+    <!-- 공시지원금 -->
+    <div class="col-box">
+      <div class="col-title">공시지원금</div>
+      <div class="field">
+        <label>기계값 (원)</label>
+        <input type="number" id="g-device" inputmode="numeric" pattern="[0-9]*" placeholder="900000">
+      </div>
+      <div class="field">
+        <label>앞 구간 월 요금</label>
+        <input type="number" id="g-plan6" inputmode="numeric" pattern="[0-9]*" placeholder="89000">
+        <div class="month-slider">
+          <div class="month-slider-row">
+            <input type="range" id="gm1" min="1" max="23" value="6" step="1">
+            <span class="month-tag"><span id="gm1-val">6</span>개월</span>
+          </div>
+          <div class="month-sub">뒷 구간: <span id="gm2-val">18</span>개월</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>뒷 구간 월 요금</label>
+        <input type="number" id="g-plan18" inputmode="numeric" pattern="[0-9]*" placeholder="69000">
+      </div>
+    </div>
+
+    <!-- 선택약정 -->
+    <div class="col-box">
+      <div class="col-title">선택약정</div>
+      <div class="field">
+        <label>기계값 (원)</label>
+        <input type="number" id="s-device" inputmode="numeric" pattern="[0-9]*" placeholder="1200000">
+      </div>
+      <div class="field">
+        <label>앞 구간 월 요금</label>
+        <input type="number" id="s-plan6" inputmode="numeric" pattern="[0-9]*" placeholder="66750">
+        <div class="month-slider">
+          <div class="month-slider-row">
+            <input type="range" id="sm1" min="1" max="23" value="6" step="1">
+            <span class="month-tag"><span id="sm1-val">6</span>개월</span>
+          </div>
+          <div class="month-sub">뒷 구간: <span id="sm2-val">18</span>개월</div>
+        </div>
+      </div>
+      <div class="field">
+        <label>뒷 구간 월 요금</label>
+        <input type="number" id="s-plan18" inputmode="numeric" pattern="[0-9]*" placeholder="51750">
+      </div>
+    </div>
+  </div>
+
+  <!-- 결과 -->
+  <div class="result-sections">
+    <div class="result-card" id="card-gong">
+      <div class="rc-title">공시지원금</div>
+      <div class="rc-row"><span>기계값</span><span id="g-device-out">-</span></div>
+      <div class="rc-row"><span id="g-r6-label">앞 구간</span><span id="g-r6-out">-</span></div>
+      <div class="rc-row"><span id="g-r18-label">뒷 구간</span><span id="g-r18-out">-</span></div>
+      <hr class="rc-sep">
+      <div class="rc-total-label" id="g-total-label">총 비용</div>
+      <div class="rc-total" id="g-total">-</div>
+    </div>
+    <div class="result-card" id="card-sun">
+      <div class="rc-title">선택약정</div>
+      <div class="rc-row"><span>기계값</span><span id="s-device-out">-</span></div>
+      <div class="rc-row"><span id="s-r6-label">앞 구간</span><span id="s-r6-out">-</span></div>
+      <div class="rc-row"><span id="s-r18-label">뒷 구간</span><span id="s-r18-out">-</span></div>
+      <hr class="rc-sep">
+      <div class="rc-total-label" id="s-total-label">총 비용</div>
+      <div class="rc-total" id="s-total">-</div>
+    </div>
+  </div>
+
+  <div class="diff-box">
+    <div class="diff-label" id="diff-label">값을 입력하면 자동 계산돼요</div>
+    <div class="diff-value" id="diff-value"></div>
+    <div class="diff-desc" id="diff-desc"></div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">초기화</button>
+
+</div>
+
+<script>
+function fmt(n) {
+  return Math.round(n).toLocaleString('ko-KR') + '원';
+}
+
+document.getElementById('gm1').addEventListener('input', function() {
+  const v = parseInt(this.value);
+  document.getElementById('gm1-val').textContent = v;
+  document.getElementById('gm2-val').textContent = 24 - v;
+  calc();
+});
+
+document.getElementById('sm1').addEventListener('input', function() {
+  const v = parseInt(this.value);
+  document.getElementById('sm1-val').textContent = v;
+  document.getElementById('sm2-val').textContent = 24 - v;
+  calc();
+});
+
+function calc() {
+  const gDevice = parseFloat(document.getElementById('g-device').value);
+  const sDevice = parseFloat(document.getElementById('s-device').value);
+  const gP6     = parseFloat(document.getElementById('g-plan6').value);
+  const sP6     = parseFloat(document.getElementById('s-plan6').value);
+  const gP18    = parseFloat(document.getElementById('g-plan18').value);
+  const sP18    = parseFloat(document.getElementById('s-plan18').value);
+  const gm1 = parseInt(document.getElementById('gm1').value);
+  const gm2 = 24 - gm1;
+  const sm1 = parseInt(document.getElementById('sm1').value);
+  const sm2 = 24 - sm1;
+
+  document.getElementById('g-r6-label').textContent  = '앞 ' + gm1 + '개월';
+  document.getElementById('g-r18-label').textContent = '뒷 ' + gm2 + '개월';
+  document.getElementById('s-r6-label').textContent  = '앞 ' + sm1 + '개월';
+  document.getElementById('s-r18-label').textContent = '뒷 ' + sm2 + '개월';
+  document.getElementById('g-total-label').textContent = gm1 + '+' + gm2 + '개월 총비용';
+  document.getElementById('s-total-label').textContent = sm1 + '+' + sm2 + '개월 총비용';
+
+  if ([gDevice, sDevice, gP6, sP6, gP18, sP18].some(isNaN)) return;
+
+  const gR6    = gP6 * gm1;
+  const gR18   = gP18 * gm2;
+  const gTotal = gDevice + gR6 + gR18;
+
+  const sR6    = sP6 * sm1;
+  const sR18   = sP18 * sm2;
+  const sTotal = sDevice + sR6 + sR18;
+
+  document.getElementById('g-device-out').textContent = fmt(gDevice);
+  document.getElementById('g-r6-out').textContent     = fmt(gR6);
+  document.getElementById('g-r18-out').textContent    = fmt(gR18);
+  document.getElementById('g-total').textContent      = fmt(gTotal);
+
+  document.getElementById('s-device-out').textContent = fmt(sDevice);
+  document.getElementById('s-r6-out').textContent     = fmt(sR6);
+  document.getElementById('s-r18-out').textContent    = fmt(sR18);
+  document.getElementById('s-total').textContent      = fmt(sTotal);
+
+  document.querySelectorAll('.rc-badge').forEach(b => b.remove());
+  document.getElementById('card-gong').classList.remove('winner');
+  document.getElementById('card-sun').classList.remove('winner');
+
+  const diff = Math.abs(gTotal - sTotal);
+  const badge = '<div class="rc-badge">더 유리</div>';
+
+  if (gTotal < sTotal) {
+    document.getElementById('card-gong').classList.add('winner');
+    document.getElementById('card-gong').querySelector('.rc-title').insertAdjacentHTML('beforebegin', badge);
+    document.getElementById('diff-label').textContent = '공시지원금이 더 유리해요';
+    document.getElementById('diff-value').textContent = fmt(diff) + ' 절약';
+    document.getElementById('diff-desc').textContent  = '공시지원금 선택 시 절감액';
+  } else if (sTotal < gTotal) {
+    document.getElementById('card-sun').classList.add('winner');
+    document.getElementById('card-sun').querySelector('.rc-title').insertAdjacentHTML('beforebegin', badge);
+    document.getElementById('diff-label').textContent = '선택약정이 더 유리해요';
+    document.getElementById('diff-value').textContent = fmt(diff) + ' 절약';
+    document.getElementById('diff-desc').textContent  = '선택약정 선택 시 절감액';
+  } else {
+    document.getElementById('diff-label').textContent = '두 옵션이 동일해요';
+    document.getElementById('diff-value').textContent = '차액 없음';
+    document.getElementById('diff-desc').textContent  = '';
+  }
+}
+
+function resetAll() {
+  ['g-device','g-plan6','g-plan18','s-device','s-plan6','s-plan18'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('gm1').value = 6;
+  document.getElementById('sm1').value = 6;
+  document.getElementById('gm1-val').textContent = 6;
+  document.getElementById('gm2-val').textContent = 18;
+  document.getElementById('sm1-val').textContent = 6;
+  document.getElementById('sm2-val').textContent = 18;
+  ['g-device-out','g-r6-out','g-r18-out','g-total','s-device-out','s-r6-out','s-r18-out','s-total'].forEach(id => {
+    document.getElementById(id).textContent = '-';
+  });
+  document.querySelectorAll('.rc-badge').forEach(b => b.remove());
+  document.getElementById('card-gong').classList.remove('winner');
+  document.getElementById('card-sun').classList.remove('winner');
+  document.getElementById('diff-label').textContent = '값을 입력하면 자동 계산돼요';
+  document.getElementById('diff-value').textContent = '';
+  document.getElementById('diff-desc').textContent  = '';
+}
+
+['g-device','g-plan6','g-plan18','s-device','s-plan6','s-plan18'].forEach(id => {
+  document.getElementById(id).addEventListener('input', calc);
+});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>
