@@ -1,6 +1,6 @@
 {
-  "name": "공시 vs 선택약정 계산기",
-  "short_name": "요금비교",
+  "name": "공시vs선약 계산기",
+  "short_name": "공시vs선약",
   "description": "공시지원금과 선택약정 비용을 비교하는 계산기",
   "start_url": "./index.html",
   "display": "standalone",
